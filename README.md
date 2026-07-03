@@ -2,7 +2,7 @@
 
 **The official record of the living web. Witnessed by validators, attested by AI, permanent by design.**
 
-The web forgets — pages get quietly edited, sources vanish, "we never said that" happens. Screenshots prove nothing. GAZETTE fixes this: paste a URL, and GenLayer validators each fetch it independently, agree on what it said, and write the attestation to chain forever. Come back later to catch a stealth edit or prove what a since-deleted source really claimed.
+The web forgets, pages get quietly edited, sources vanish, "we never said that" happens. Screenshots prove nothing. GAZETTE fixes this: paste a URL, and GenLayer validators each fetch it independently, agree on what it said, and write the attestation to chain forever. Come back later to catch a stealth edit or prove what a since-deleted source really claimed.
 
 **Contract:** `0x943918c5D4C76f3Be4Be7E409ABd1B00f7D2d06e` on GenLayer Studionet
 
