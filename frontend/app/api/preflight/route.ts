@@ -41,10 +41,31 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ verdict: "blocked", note: `The page returned HTTP ${res.status}. Witness anyway to record the state.` });
     }
 
-    const text = (await res.text()).slice(0, 20000).toLowerCase();
-    const wallSignals = ["captcha", "are you a robot", "enable javascript", "subscribe to continue", "cookies to continue", "cf-browser-verification"];
-    const hit = wallSignals.find((s) => text.includes(s));
-    if (hit) {
+    const text = (await res.text()).toLowerCase();
+
+    // Specific, high-confidence wall/bot-check phrases. Single-word matches
+    // (like "captcha") false-positive on any page that references CAPTCHAs,
+    // so require multi-word phrases that only appear on actual walls.
+    const wallSignals = [
+      "cf-browser-verification",
+      "checking your browser before",
+      "please enable cookies to continue",
+      "please verify you are human",
+      "please complete the security check",
+      "just a moment...",
+      "attention required | cloudflare",
+      "please turn javascript on and reload",
+      "subscribe to continue reading",
+      "already a subscriber?",
+      "you have reached your limit of free articles",
+    ];
+    const hits = wallSignals.filter((s) => text.includes(s));
+
+    // A wall page is also usually short. A real article is thousands of bytes;
+    // walls sit at a few hundred to a couple thousand.
+    const shortAndAWall = hits.length > 0 && text.length < 4000;
+
+    if (hits.length >= 2 || shortAndAWall) {
       return NextResponse.json({ verdict: "blocked", note: "This page looks like it shows a bot/cookie/paywall to automated fetchers. Validators may see the same — a BLOCKED record is still evidence." });
     }
     return NextResponse.json({ verdict: "ready", note: "The page is reachable. Validators should see its content." });
