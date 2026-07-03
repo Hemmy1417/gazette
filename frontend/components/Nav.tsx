@@ -8,6 +8,7 @@ import { useWallet, shortAddr } from "@/lib/genlayer/wallet";
 import { Wordmark } from "./Stamp";
 
 const LINKS = [
+  { href: "/", label: "Home" },
   { href: "/witness", label: "Witness" },
   { href: "/records", label: "The Record" },
   { href: "/memory-hole", label: "Memory Hole" },
