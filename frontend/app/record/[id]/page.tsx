@@ -79,9 +79,9 @@ export default function CertificatePage() {
         id="record"
         title="Reading a certificate"
         steps={[
-          <>This is the <strong>permanent, citable record</strong> of what a page said when it was witnessed. It lives on chain — nobody, including us, can edit it.</>,
-          <>The <strong>state tag</strong> shows the current verdict: LIVE (unchanged since witnessing), EDITED (the source changed), GONE (the source vanished).</>,
-          <><strong>Re-witness</strong> (right rail, sign in required) to check whether the source has changed since. If it has, this record lands in the Memory Hole and the change is recorded here.</>,
+          <>This is the <strong>permanent, citable record</strong> of what someone else&apos;s page said when it was witnessed. It lives on chain — nobody, including us or the site&apos;s owner, can edit it.</>,
+          <>The <strong>state tag</strong> shows the current verdict: LIVE (source unchanged since witnessing), EDITED (source owner has rewritten it), GONE (source removed or unreachable).</>,
+          <><strong>Re-witness</strong> (right rail, sign in required) to check whether the source has changed since. If the site&apos;s owner has edited or removed it, this record lands in the Memory Hole with the diff recorded here.</>,
           <>Use <strong>Cite this record</strong> to copy a footnote-ready citation, <strong>Embed the badge</strong> to put a proof mark on your own site, or <strong>the JSON API</strong> to consume the attestation programmatically.</>,
         ]}
       />

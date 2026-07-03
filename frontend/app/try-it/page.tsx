@@ -12,16 +12,27 @@ export default function TryItPage() {
     <div style={{ maxWidth: 760, margin: "0 auto", padding: "48px 24px" }}>
       <div className="eyebrow" style={{ color: "var(--stamp)", marginBottom: 12 }}>Live demo</div>
       <h1 className="display-lg" style={{ marginBottom: 16 }}>Watch the Gazette catch an edit</h1>
+      <p className="serif-lead" style={{ marginBottom: 24, color: "var(--ink-soft)" }}>
+        In real use, journalists witness pages <em>other people</em> control — a news
+        outlet, a government agency, a politician&apos;s blog. Later, when those pages get
+        stealth-edited or deleted, the Gazette catches it.
+      </p>
       <p className="serif-lead" style={{ marginBottom: 32, color: "var(--ink-soft)" }}>
-        The Gazette&apos;s whole point is edit detection — but that only shines when
-        the source actually changes. Below is a page we can edit on request, so you
-        can watch a record land in the Memory Hole in real time.
+        For this demo, <strong>we&apos;re playing the role of the newsroom for you</strong>.
+        The URL below is a fake breaking-news page we control — so you can watch
+        edit detection work end-to-end without waiting for the BBC to update a
+        headline.
       </p>
 
       <div style={{ border: "1px solid var(--ink)", padding: 20, marginBottom: 32 }}>
-        <div className="sans-sm-strong" style={{ textTransform: "uppercase", letterSpacing: "1px", color: "var(--stamp)", marginBottom: 8 }}>The demo page</div>
+        <div className="sans-sm-strong" style={{ textTransform: "uppercase", letterSpacing: "1px", color: "var(--stamp)", marginBottom: 8 }}>The rehearsal newsroom</div>
         <div className="serif-body mono" style={{ wordBreak: "break-all", marginBottom: 12 }}>{demoUrl || "…"}</div>
         {origin && <a href={demoUrl} target="_blank" rel="noreferrer" className="btn-quiet" style={{ fontSize: 13, padding: 0 }}>Open the page in a new tab →</a>}
+        <p className="serif-body caption" style={{ marginTop: 12 }}>
+          Think of this as a newsroom&apos;s story we can rewrite on demand.
+          In real use, you&apos;d witness a page you don&apos;t control — and
+          the &ldquo;edit&rdquo; happens when the site&apos;s owner changes it themselves.
+        </p>
       </div>
 
       <div className="rule-heavy" style={{ marginBottom: 16 }} />
@@ -32,22 +43,24 @@ export default function TryItPage() {
           <div className="sans-strong" style={{ marginBottom: 4 }}>Witness the page as it stands</div>
           <p className="serif-body" style={{ color: "var(--ink-soft)" }}>
             Go to <Link href="/witness" style={{ color: "var(--link)" }}>the witness desk</Link>, paste the URL above,
-            and press <em>Witness this page</em>. In 1–3 minutes you&apos;ll get a permanent certificate — headline,
+            and press <em>Witness this page</em>. In 1&ndash;3 minutes you&apos;ll get a permanent certificate — headline,
             summary, key claims, verbatim quotes. Note the record id (like <code>r_2</code>).
           </p>
         </li>
         <li>
-          <div className="sans-strong" style={{ marginBottom: 4 }}>Ask for a substantive edit</div>
+          <div className="sans-strong" style={{ marginBottom: 4 }}>Ask us to rewrite the &ldquo;newsroom&rdquo; page</div>
           <p className="serif-body" style={{ color: "var(--ink-soft)" }}>
-            Message us to rewrite the page — change the headline, swap a claim, remove a quote.
-            The URL stays the same; the words change. This takes about 30 seconds on our end.
+            Message us what you&apos;d like changed &mdash; a new headline, a swapped claim, a
+            removed quote. We&apos;ll push the edit in about thirty seconds. <strong>This step is
+            standing in for what happens naturally when a real news outlet edits their own
+            page.</strong>
           </p>
         </li>
         <li>
           <div className="sans-strong" style={{ marginBottom: 4 }}>Re-witness the record</div>
           <p className="serif-body" style={{ color: "var(--ink-soft)" }}>
             Open your certificate at <code className="mono">/record/[your record id]</code> and press
-            <em> Re-witness this page</em>. Validators fetch it again, compare it to the original attestation,
+            <em> Re-witness this page</em>. Validators fetch the URL again, compare it to the original attestation,
             and rule <strong style={{ color: "var(--stamp)" }}>EDITED</strong> with a summary of exactly what changed.
           </p>
         </li>
@@ -62,10 +75,11 @@ export default function TryItPage() {
       </ol>
 
       <div style={{ marginTop: 40, paddingTop: 24, borderTop: "3px double var(--ink)" }}>
-        <div className="sans-strong" style={{ marginBottom: 8 }}>Prefer a page you control?</div>
-        <p className="serif-body" style={{ color: "var(--ink-soft)", marginBottom: 12 }}>
-          You can run the same demo against any page you can edit — a public GitHub Gist works well.
-          Create a gist, use the <strong>Raw</strong> URL, witness it, edit the gist, re-witness. Same result.
+        <div className="sans-strong" style={{ marginBottom: 8 }}>Want to watch a real edit happen?</div>
+        <p className="serif-body" style={{ color: "var(--ink-soft)", marginBottom: 8 }}>
+          Witness a fast-moving news site like <code className="mono">bbc.com/news</code> or a stock&apos;s
+          Yahoo Finance page, wait a few hours, then re-witness. Real headlines update on their own
+          all day — the Gazette will catch every change, without you touching the source.
         </p>
       </div>
 

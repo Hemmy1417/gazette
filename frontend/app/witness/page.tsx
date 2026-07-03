@@ -111,21 +111,23 @@ export default function WitnessPage() {
       <div className="eyebrow" style={{ color: "var(--stamp)", marginBottom: 12 }}>The witness desk</div>
       <h1 className="display-lg" style={{ marginBottom: 12 }}>Witness a page</h1>
       <p className="serif-lead" style={{ marginBottom: 32, color: "var(--ink-soft)" }}>
-        Paste a URL. GenLayer&apos;s validators will each fetch it independently and agree on
-        what it says. The attestation is permanent — and you can re-witness later to catch
-        any edit.
+        Paste the URL of any live web page — someone else&apos;s article, press release,
+        policy page. GenLayer&apos;s validators will each fetch it independently and agree on
+        what it says. Come back later; if the site&apos;s owner has edited or removed the
+        page, the Gazette catches it.
       </p>
 
       <HowTo
         id="witness"
         title="The witness desk"
         steps={[
-          <><strong>Paste a URL</strong> — any public web page.</>,
-          <><strong>Check reachability</strong> (optional) — a quick preflight fetches the page from our servers to warn you if it&apos;s paywalled or blocked. A BLOCKED record is still valid evidence.</>,
+          <>You&apos;re recording what someone else&apos;s public web page says right now. In real use this is a news article, a government page, a corporate statement — any URL that could get quietly changed later.</>,
+          <><strong>Paste the URL</strong>.</>,
+          <><strong>Check reachability</strong> (optional) — a quick preflight fetches the page from our servers to warn you if it&apos;s paywalled or bot-walled. A BLOCKED record is still valid evidence.</>,
           <><strong>Add a note</strong> (optional, public) — why this matters, or what to watch for.</>,
           <><strong>Ask a claim question</strong> (optional) — a yes/no question about the page. The witness answers with the closest supporting quote.</>,
-          <><strong>Press &ldquo;Witness this page&rdquo;</strong> — validators fetch it independently, agree on what it says, and the record is written to chain. One to three minutes.</>,
-          <>When it&apos;s done you get a permanent certificate you can share, cite, or embed. Come back later and re-witness to catch stealth edits.</>,
+          <><strong>Press &ldquo;Witness this page&rdquo;</strong> — validators each fetch the page and agree on what it says. One to three minutes.</>,
+          <>The result is a permanent certificate you can share, cite, or embed. If the site owner changes the page later, come back and re-witness — the Gazette catches the diff.</>,
         ]}
       />
 

@@ -23,19 +23,19 @@ export default function MemoryHolePage() {
       <div className="eyebrow" style={{ color: "var(--stamp)", marginBottom: 12 }}>What the web tried to forget</div>
       <h1 className="display-hero" style={{ color: "var(--stamp)", marginBottom: 16 }}>The Memory Hole</h1>
       <p className="serif-lead" style={{ maxWidth: 620, marginBottom: 32, color: "var(--ink-soft)" }}>
-        Every record here was witnessed once, then found changed or gone. A headline
-        quietly rewritten, a correction never disclosed, a page removed. The Gazette kept
-        what the source did not.
+        Every record here was witnessed once, then found changed or gone by the site&apos;s
+        own owner. A headline quietly rewritten, a correction never disclosed, a page
+        removed. The Gazette kept what the source did not.
       </p>
 
       <HowTo
         id="memory-hole"
         title="How records land here"
         steps={[
-          <>Anyone can <strong>witness</strong> a public page. That creates a permanent record of what it said.</>,
-          <>Later, anyone can <strong>re-witness</strong> the same record. Validators fetch the URL again and compare it to the original attestation.</>,
-          <>If the verdict is <strong>EDITED</strong> (substance changed) or <strong>GONE</strong> (page removed), the record lands here.</>,
-          <>Open any entry to see the original attestation <em>and</em> what changed — side by side, forever.</>,
+          <>Someone witnesses a public page. That creates a permanent record of what the site&apos;s owner said.</>,
+          <>Later, anyone can <strong>re-witness</strong> the same record. Validators fetch the URL again and diff it against the original attestation.</>,
+          <>If the site owner has changed the page in substance (verdict <strong>EDITED</strong>) or removed it (verdict <strong>GONE</strong>), the record lands here.</>,
+          <>Open any entry to see the original attestation <em>and</em> what the source owner changed — side by side, forever.</>,
         ]}
       />
 

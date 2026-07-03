@@ -29,11 +29,11 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: "GAZETTE — The official record of the living web",
   description:
-    "Witness any web page. GenLayer validators independently fetch it, AI attests what it said, and the record is permanent. Catch stealth edits, prove vanished sources.",
+    "Witness any live web page. GenLayer validators independently fetch it, AI attests what the page said, and the record is permanent. If the site&apos;s owner rewrites or removes the page later, the Gazette catches it.",
   openGraph: {
     title: "GAZETTE — The official record of the living web",
     description:
-      "A permanent, verifiable record of what the web said — witnessed by validators, attested by AI, on GenLayer.",
+      "A permanent, verifiable record of what someone else's page said — witnessed by validators, attested by AI, on GenLayer.",
     url: SITE_URL,
     siteName: "Gazette",
     type: "website",
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "GAZETTE — The official record of the living web",
-    description: "Witness any web page. Catch stealth edits. Prove vanished sources.",
+    description: "Witness a live web page. Catch stealth edits by the source. Prove vanished sources.",
   },
 };
 

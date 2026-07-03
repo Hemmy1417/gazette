@@ -2,7 +2,7 @@
 
 **The official record of the living web. Witnessed by validators, attested by AI, permanent by design.**
 
-The web forgets, pages get quietly edited, sources vanish, "we never said that" happens. Screenshots prove nothing. GAZETTE fixes this: paste a URL, and GenLayer validators each fetch it independently, agree on what it said, and write the attestation to chain forever. Come back later to catch a stealth edit or prove what a since-deleted source really claimed.
+The web forgets: pages get quietly edited by their owners, sources vanish, "we never said that" happens. Screenshots prove nothing. GAZETTE fixes this: paste the URL of someone else's live page, and GenLayer validators each fetch it independently, agree on what it said, and write the attestation to chain forever. When the site's owner later rewrites or deletes their page, the Gazette catches the change.
 
 **Contract:** `0x943918c5D4C76f3Be4Be7E409ABd1B00f7D2d06e` on GenLayer Studionet
 
@@ -10,8 +10,10 @@ The web forgets, pages get quietly edited, sources vanish, "we never said that" 
 
 ## How it works
 
+You witness pages **other people control** — a news article, a government notice, a company press release, a politician's blog. The Gazette records what those pages *actually* said, so you can catch the site's owner if they edit or remove them later.
+
 1. **Witness** — paste a URL. Independent validators fetch it and agree on what the page said: headline, summary, key claims, verbatim quotes, page state.
-2. **Come back** — re-witness the same record. Validators fetch the URL again and diff against the original attestation. Verdict is `UNCHANGED`, `EDITED`, or `GONE`.
+2. **Come back** — re-witness the same record. Validators fetch the URL again and diff against the original attestation. Verdict is `UNCHANGED`, `EDITED` (the source owner rewrote the page), or `GONE` (they removed it).
 3. **The Memory Hole** — every record that ends up `EDITED` or `GONE` is listed publicly. The original attestation is preserved. The web tried to forget; the Gazette didn't.
 
 ## Features
@@ -106,9 +108,13 @@ npm install && npm run dev
 
 ## The three-minute demo
 
+In real use the source owner rewrites their own page and journalists catch them. For a controlled demo we play the newsroom ourselves so you can watch the round-trip.
+
 Read `/try-it` on the deployed site for the walkthrough:
 
-1. Witness `[your-domain]/demo/breaking-news.txt`
-2. Edit that file (a small commit)
+1. Witness `[your-domain]/demo/breaking-news.txt` — a fake newsroom page we control
+2. Ask us to rewrite it (a small commit) — standing in for what a real news outlet does to their own page
 3. Re-witness — verdict: `EDITED`
 4. The record lands in the Memory Hole with the change described
+
+For a *real*, self-serve demo: witness a fast-moving news homepage like `bbc.com/news`, wait a few hours, and re-witness. The BBC will update their own page all day.

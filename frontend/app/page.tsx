@@ -10,7 +10,7 @@ import { HowTo } from "@/components/HowTo";
 import type { GazetteRecord, Stats } from "@/lib/contracts/types";
 
 const TICKER = [
-  "The chain sees what the page said — even after the page changes it.",
+  "The chain sees what the page said — even after the site owner changes it.",
   "Validators fetch independently. No single source of trust.",
   "A screenshot proves nothing. A witnessed record proves everything.",
   "When a source vanishes, the record remains.",
@@ -46,9 +46,9 @@ export default function FrontPage() {
             The web forgets.<br />The Gazette doesn&apos;t.
           </h1>
           <p className="serif-lead" style={{ maxWidth: 620, marginBottom: 28, color: "var(--ink-soft)" }}>
-            Witness any web page and GenLayer&apos;s validators fetch it independently, agree on
-            what it said, and write it to the chain forever. Come back later to catch a
-            stealth edit — or to prove what a since-deleted source really claimed.
+            Point the Gazette at anyone&apos;s live web page. Validators fetch it independently,
+            agree on what it said, and write it to the chain forever. If the site&apos;s owner
+            later rewrites or deletes it, come back and the Gazette catches the change.
           </p>
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
             <Link href="/witness" className="btn-stamp">Witness a page</Link>
@@ -91,11 +91,12 @@ export default function FrontPage() {
           id="landing"
           title="Getting around"
           steps={[
-            <><Link href="/witness" style={{ color: "var(--link)" }}>Witness</Link> — the desk where you record a page. Any public URL, one click, permanent record in a couple of minutes.</>,
+            <>You witness pages <em>other people</em> control — news sites, government pages, corporate press releases. Later, if the site&apos;s owner edits or deletes the page, the Gazette catches it.</>,
+            <><Link href="/witness" style={{ color: "var(--link)" }}>Witness</Link> — the desk where you record what a live page says right now.</>,
             <><Link href="/records" style={{ color: "var(--link)" }}>The Record</Link> — everything the Gazette has ever witnessed, searchable.</>,
             <><Link href="/memory-hole" style={{ color: "var(--link)" }}>Memory Hole</Link> — records whose sources were edited or vanished. The flagship story.</>,
             <><Link href="/dossiers" style={{ color: "var(--link)" }}>Dossiers</Link> — folders of related records. Your beat, your investigation, your citations.</>,
-            <>New here? <Link href="/try-it" style={{ color: "var(--link)" }}>The three-minute demo</Link> walks you through witnessing → editing → catching the edit.</>,
+            <>New here? <Link href="/try-it" style={{ color: "var(--link)" }}>The three-minute demo</Link> uses a page we control so you can see edit-detection work end-to-end.</>,
           ]}
         />
         <div className="rule-heavy" style={{ marginBottom: 8 }} />
