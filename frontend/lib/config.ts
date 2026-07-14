@@ -6,7 +6,7 @@ export const CHAIN_RPC = studionet.rpcUrls.default.http[0];
 export const CHAIN_NAME = studionet.name;
 
 export const CONTRACT_ADDRESS = (process.env.NEXT_PUBLIC_CONTRACT_ADDRESS ||
-  "0x943918c5D4C76f3Be4Be7E409ABd1B00f7D2d06e") as `0x${string}`;
+  "0xA039AA95D858A3Ef6BD9316B1D79F230073a76dc") as `0x${string}`;
 export const CONTRACT_CONFIGURED = /^0x[a-fA-F0-9]{40}$/.test(CONTRACT_ADDRESS);
 
 export const PAGE_STATES = ["LIVE", "BLOCKED", "GONE"] as const;

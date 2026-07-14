@@ -1,4 +1,4 @@
-# v0.1.0
+# v0.2.0
 # { "Depends": "py-genlayer:1jb45aa8ynh2a9c9xn3b7qqh8sm5q93hwfp7jqmwsfhh8jpz09h6" }
 
 import json
@@ -69,12 +69,20 @@ class Gazette(gl.Contract):
     total_gone:     u256
     total_dossiers: u256
     records:        TreeMap[str, str]   # r_N -> record JSON
-    url_history:    TreeMap[str, str]   # url_hash -> JSON list of record ids
-    wallet_records: TreeMap[str, str]   # address -> JSON list of record ids
-    memory_hole:    TreeMap[str, str]   # "ids" -> JSON list of record ids
+    # Flat sequential lists: every one-to-many index stores single ids under
+    # "<list key>:<i>" with the item count in seq_counts["<list key>"]. An
+    # append writes ONE key and ONE counter — O(1) regardless of how long the
+    # list grows. (The previous JSON-blob-per-key layout re-parsed and re-wrote
+    # the whole list on every append: costs rose with list length and a busy
+    # index would eventually hit transaction memory limits.)
+    url_history:    TreeMap[str, str]   # "<url_hash>:<i>" -> record id
+    wallet_records: TreeMap[str, str]   # "<address>:<i>"  -> record id
+    memory_hole:    TreeMap[str, str]   # "ids:<i>"        -> record id
+    wallet_dossiers: TreeMap[str, str]  # "<address>:<i>"  -> dossier id
+    seq_counts:     TreeMap[str, str]   # list key -> item count
+    hole_seen:      TreeMap[str, str]   # record id -> "1" (memory-hole membership)
     reputation:     TreeMap[str, str]   # address -> reputation JSON
     dossiers:       TreeMap[str, str]   # d_N -> dossier JSON
-    wallet_dossiers: TreeMap[str, str]  # address -> JSON list of dossier ids
 
     def __init__(self):
         self.total_records  = u256(0)
@@ -93,12 +101,25 @@ class Gazette(gl.Contract):
     def _save(self, rec):
         self.records[rec["record_id"]] = json.dumps(rec)
 
-    def _push(self, tree, key, value):
-        raw = tree.get(key, "")
-        items = json.loads(raw) if raw else []
-        if value not in items:
-            items.append(value)
-            tree[key] = json.dumps(items)
+    def _seq_len(self, key):
+        raw = self.seq_counts.get(key, "")
+        return int(raw) if raw else 0
+
+    def _seq_push(self, tree, key, value):
+        """O(1) append to a flat sequential list."""
+        n = self._seq_len(key)
+        tree[f"{key}:{n}"] = value
+        self.seq_counts[key] = str(n + 1)
+
+    def _seq_slice(self, tree, key, take=None, newest_first=False):
+        """Read a flat list; optionally only the newest `take` items."""
+        n = self._seq_len(key)
+        lo = max(0, n - take) if take is not None else 0
+        ids = [tree.get(f"{key}:{i}", "") for i in range(lo, n)]
+        ids = [i for i in ids if i]
+        if newest_first:
+            ids.reverse()
+        return ids
 
     def _rep(self, address):
         raw = self.reputation.get(address.lower(), "")
@@ -113,7 +134,11 @@ class Gazette(gl.Contract):
         self.reputation[address.lower()] = json.dumps(r)
 
     def _hole_add(self, record_id):
-        self._push(self.memory_hole, "ids", record_id)
+        # membership map keeps the dedup the old JSON list gave us, still O(1)
+        if self.hole_seen.get(record_id, ""):
+            return
+        self.hole_seen[record_id] = "1"
+        self._seq_push(self.memory_hole, "ids", record_id)
 
     # ── AI: witness a page (Reader pattern, comparative consensus) ──────────
 
@@ -169,7 +194,19 @@ Respond ONLY with JSON:
  "key_claims": ["<up to 5 one-sentence factual claims the page makes>"],
  "quotes": ["<up to 3 short verbatim quotes, exact text>"],
  "claim": {("{\"verdict\": \"<yes|no|unclear>\", \"quote\": \"<supporting quote or ''>\"}" if claim_question else "null")}}}"""
-            return gl.nondet.exec_prompt(prompt)
+            # A transient LLM-provider error must not abort consensus with an
+            # unhandled exception — this validator degrades to BLOCKED (which
+            # never enters the memory hole or bumps stats) instead.
+            try:
+                return gl.nondet.exec_prompt(prompt)
+            except Exception as e:
+                return json.dumps({
+                    "page_state": "BLOCKED",
+                    "title": "", "outlet": "", "author": "", "as_of": "",
+                    "summary": f"Attestation inconclusive: this validator's LLM provider errored ({str(e)[:120]}).",
+                    "key_claims": [], "quotes": [],
+                    "claim": {"verdict": "unclear", "quote": ""} if claim_question else None,
+                })
 
         principle = (
             "Outputs are equivalent if page_state matches, the titles refer to the same headline, "
@@ -243,7 +280,17 @@ Respond ONLY with JSON:
 {{"verdict": "<UNCHANGED|EDITED|GONE>",
  "changes": "<if EDITED or GONE: 1-3 sentences saying exactly what changed; else ''>",
  "current_summary": "<2-3 sentences: what the page says now>"}}"""
-            return gl.nondet.exec_prompt(prompt)
+            # LLM-provider fail-safe: an errored round must never mark a page
+            # EDITED/GONE (both are permanent-record events) — degrade to a
+            # no-op UNCHANGED with the inconclusiveness on the record.
+            try:
+                return gl.nondet.exec_prompt(prompt)
+            except Exception as e:
+                return json.dumps({
+                    "verdict": "UNCHANGED",
+                    "changes": "",
+                    "current_summary": f"Revision round inconclusive: this validator's LLM provider errored ({str(e)[:120]}).",
+                })
 
         principle = (
             "Outputs are equivalent if the verdict matches. Descriptions of what changed "
@@ -284,8 +331,8 @@ Respond ONLY with JSON:
             "latest":      attestation["page_state"],
         }
         self._save(rec)
-        self._push(self.url_history, uhash, record_id)
-        self._push(self.wallet_records, sender.lower(), record_id)
+        self._seq_push(self.url_history, uhash, record_id)
+        self._seq_push(self.wallet_records, sender.lower(), record_id)
         self._bump(sender, "witnessed")
         if attestation["page_state"] == "GONE":
             self._hole_add(record_id)
@@ -339,7 +386,7 @@ Respond ONLY with JSON:
             "record_ids":  [],
         }
         self.dossiers[dossier_id] = json.dumps(d)
-        self._push(self.wallet_dossiers, sender.lower(), dossier_id)
+        self._seq_push(self.wallet_dossiers, sender.lower(), dossier_id)
         self.total_dossiers = u256(seq + 1)
         return json.dumps(d)
 
@@ -392,26 +439,19 @@ Respond ONLY with JSON:
     @gl.public.view
     def get_url_history(self, url: str) -> str:
         uhash = _url_hash(_normalize_url(url))
-        raw = self.url_history.get(uhash, "")
-        ids = json.loads(raw) if raw else []
+        ids = self._seq_slice(self.url_history, uhash)
         return json.dumps([json.loads(self.records[i]) for i in ids if i in self.records])
 
     @gl.public.view
     def get_memory_hole(self, n: str) -> str:
-        raw = self.memory_hole.get("ids", "")
-        ids = json.loads(raw) if raw else []
-        take = min(len(ids), max(1, int(n or "50")))
-        out = [json.loads(self.records[i]) for i in ids[-take:] if i in self.records]
-        out.reverse()
-        return json.dumps(out)
+        take = max(1, int(n or "50"))
+        ids = self._seq_slice(self.memory_hole, "ids", take=take, newest_first=True)
+        return json.dumps([json.loads(self.records[i]) for i in ids if i in self.records])
 
     @gl.public.view
     def get_records_for(self, address: str) -> str:
-        raw = self.wallet_records.get(address.lower(), "")
-        ids = json.loads(raw) if raw else []
-        out = [json.loads(self.records[i]) for i in ids if i in self.records]
-        out.sort(key=lambda r: -int(r["seq"]))
-        return json.dumps(out)
+        ids = self._seq_slice(self.wallet_records, address.lower(), newest_first=True)
+        return json.dumps([json.loads(self.records[i]) for i in ids if i in self.records])
 
     @gl.public.view
     def get_reputation(self, address: str) -> str:
@@ -423,8 +463,7 @@ Respond ONLY with JSON:
 
     @gl.public.view
     def get_dossiers_for(self, address: str) -> str:
-        raw = self.wallet_dossiers.get(address.lower(), "")
-        ids = json.loads(raw) if raw else []
+        ids = self._seq_slice(self.wallet_dossiers, address.lower())
         return json.dumps([json.loads(self.dossiers[i]) for i in ids if i in self.dossiers])
 
     @gl.public.view

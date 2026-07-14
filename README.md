@@ -4,7 +4,7 @@
 
 The web forgets: pages get quietly edited by their owners, sources vanish, "we never said that" happens. Screenshots prove nothing. GAZETTE fixes this: paste the URL of someone else's live page, and GenLayer validators each fetch it independently, agree on what it said, and write the attestation to chain forever. When the site's owner later rewrites or deletes their page, the Gazette catches the change.
 
-**Contract:** `0x943918c5D4C76f3Be4Be7E409ABd1B00f7D2d06e` on GenLayer Studionet
+**Contract:** `0xA039AA95D858A3Ef6BD9316B1D79F230073a76dc` on GenLayer Studionet
 
 ---
 
