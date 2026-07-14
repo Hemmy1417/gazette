@@ -8,6 +8,26 @@ The web forgets: pages get quietly edited by their owners, sources vanish, "we n
 
 ---
 
+## What's new in v0.2
+
+Production hardening, per GenLayer hackathon judge feedback:
+
+- **LLM error resilience** — `gl.nondet.exec_prompt` is now wrapped in `try/except` inside both
+  validator observe functions. A transient LLM-provider error no longer aborts consensus with an
+  unhandled exception: a `witness` round degrades to **`BLOCKED`** (which never enters the Memory
+  Hole or bumps stats), and a `rewitness` round degrades to a **no-op `UNCHANGED`** — a provider
+  outage can never write `EDITED` or `GONE` into the permanent record. The inconclusiveness is
+  noted on the record either way.
+- **Flat sequential storage** — every one-to-many index (`url_history`, `wallet_records`, the
+  `memory_hole`, `wallet_dossiers`) moved from a serialized JSON list under a single TreeMap key
+  to flat sequential `<key>:<i>` entries backed by a `seq_counts` counter map. Appends are now
+  **O(1) regardless of list length** — the old layout re-parsed and re-wrote the whole list on
+  every write, with costs rising as records accumulated toward transaction memory limits. The
+  Memory Hole keeps its dedup via a membership map.
+- **First direct-mode test suite** — 9 pytest tests pinning both behaviors: the two LLM
+  fail-safes, flat-key writes and counter integrity, Memory-Hole dedup, newest-first pagination,
+  and the core witness/rewitness flows.
+
 ## How it works
 
 You witness pages **other people control** — a news article, a government notice, a company press release, a politician's blog. The Gazette records what those pages *actually* said, so you can catch the site's owner if they edit or remove them later.
@@ -88,8 +108,9 @@ Gazette/
 ## Local development
 
 ```bash
-# contract tests (writing more of these is on the roadmap)
+# contract tests (9 direct-mode tests)
 pip install -r requirements.txt
+python -m pytest tests/direct -q
 
 # frontend
 cd frontend
