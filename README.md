@@ -139,3 +139,11 @@ Read `/try-it` on the deployed site for the walkthrough:
 4. The record lands in the Memory Hole with the change described
 
 For a *real*, self-serve demo: witness a fast-moving news homepage like `bbc.com/news`, wait a few hours, and re-witness. The BBC will update their own page all day.
+
+## Signed writes
+
+Contract writes are signed by the **connected wallet's own EIP-1193 provider**: the
+wallet context builds the genlayer-js client with `createClient({ chain, account,
+provider })` and every write routes through it — never an implicit `window.ethereum`
+fallback. A repository-level test (`frontend/tests/signed-write.test.ts`) proves the
+write path routes `eth_sendTransaction` through that provider with the correct `from`.
